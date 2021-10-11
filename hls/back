@@ -1,0 +1,57 @@
+nconst io = require("socket.io-client");
+let peerConnection;
+const config = {
+    iceServers: [
+        {
+            "urls": "stun:stun.l.google.com:19302",
+        },
+    ]
+};
+
+//const werift = require('werift')
+import { RTCPeerConnection } from "werift";
+
+const ENDPOINT = "http://127.0.0.1:4000";
+const socket = io(ENDPOINT);
+
+socket.on("offer", (id, description) => {
+
+
+
+    // peer2.on('stream', stream => {
+    //     console.log("bruh")
+    // })
+
+    // peerConnection = new RTCPeerConnection(config);
+    // peerConnection
+    //     .setRemoteDescription(description)
+    //     .then(() => peerConnection.createAnswer())
+    //     .then(sdp => {
+    //         console.log(sdp)
+    //         return peerConnection.setLocalDescription(sdp)
+    //     })
+    //     .then(() => {
+    //         socket.emit("answer", id, peerConnection.localDescription);
+    //     });
+
+    // peerConnection.onicecandidate = event => {
+    //     if (event.candidate) {
+    //         socket.emit("candidate", id, event.candidate);
+    //     }
+    // };
+});
+
+socket.on("candidate", (id, candidate) => {
+    // peerConnection
+    //     .addIceCandidate(new RTCIceCandidate(candidate))
+    //     .catch(e => console.error(e));
+});
+
+socket.on("connect", () => {
+    socket.emit("watcher");
+});
+
+socket.on("broadcaster", () => {
+    socket.emit("watcher");
+});
+
