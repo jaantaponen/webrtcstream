@@ -10,15 +10,23 @@ const path = require('path');
 const ENDPOINT = "http://127.0.0.1:4000";
 const socket = io(ENDPOINT);
 
+const express = require("express");
+const app = express();
+const port = 5000;
+const http = require("http");
+const server = http.createServer(app);
+app.use(express.static(__dirname + "/output"));
+
 let receiver
 const output = path.resolve("output")
+const filename = "test.webm"
 fsExtra.emptyDirSync(output)
 console.log("started")
 
 const spawnffmpeg = async () => {
   await waitUntil(() => {
-    if (fs.existsSync(`${output}/test.webm`)) {
-      const stats = fs.statSync(`${output}/test.webm`)
+    if (fs.existsSync(`${output}/${filename}`)) {
+      const stats = fs.statSync(`${output}/${filename}`)
       const fileSizeInBytes = stats.size;
       const fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
       console.log(fileSizeInMegabytes)
@@ -26,7 +34,7 @@ const spawnffmpeg = async () => {
     }
   });
 
-  const args = ["-re", "-i", `${output}/test.webm`, "-c:v", "libx264", "-c:a", "aac", "-ac", "1", "-strict", "-2", "-crf", "18", "-profile:v", "baseline", "-maxrate", "1000k", "-bufsize", "1835k", "-pix_fmt", "yuv420p", "-flags", "-global_header", "-hls_time", "10", "-hls_list_size", "6", "-hls_wrap", "10", "-start_number", "1", `${output}/index.m3u8`]
+  const args = ["-re", "-i", `${output}/${filename}`, "-c:v", "libx264", "-c:a", "aac", "-ac", "1", "-strict", "-2", "-crf", "18", "-profile:v", "baseline", "-maxrate", "1000k", "-bufsize", "1835k", "-pix_fmt", "yuv420p", "-flags", "-global_header", "-hls_time", "10", "-hls_list_size", "6", "-hls_wrap", "10", "-start_number", "1", `${output}/${filename}`]
   const ffmpeg = spawn('ffmpeg', args);
   console.log('Spawning ffmpeg ' + args.join(' '));
   ffmpeg.on('exit', () => console.log("FFMPEG EXITED"));
@@ -38,7 +46,7 @@ const spawnffmpeg = async () => {
 }
 
 socket.on("offer", async (id, description) => {
-  const recorder = new MediaRecorder([], "./output/test.webm", {
+  const recorder = new MediaRecorder([], `./output/${filename}`, {
     width: 640,
     height: 360,
   });
@@ -91,15 +99,10 @@ socket.on("offer", async (id, description) => {
   const sdp = await receiver.setLocalDescription(
     await receiver.createAnswer()
   );
-  //console.log(JSON.stringify(sdp))
   socket.emit("answer", id, sdp)
-  //socket.send(JSON.stringify(sdp));
 });
 
 socket.on("candidate", (id, candidate) => {
-  // peerConnection
-  //     .addIceCandidate(new RTCIceCandidate(candidate))
-  //     .catch(e => console.error(e));
   if (!candidate) {
     const sdp = JSON.stringify(receiver?.localDescription);
     console.log(sdp);
@@ -114,3 +117,5 @@ socket.on("connect", () => {
 socket.on("broadcaster", () => {
   socket.emit("watcher");
 });
+
+server.listen(port, () => console.log(`Server is running on port ${port}, files can be found at /output`));

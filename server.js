@@ -1,9 +1,7 @@
 const express = require("express");
 const app = express();
-
 let broadcaster;
 const port = 4000;
-
 const http = require("http");
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
@@ -11,7 +9,6 @@ const io = require("socket.io")(server, {
     origin: '*',
   }
 });
-
 io.sockets.on("error", e => console.log(e));
 io.sockets.on("connection", socket => {
   socket.on("broadcaster", () => {
