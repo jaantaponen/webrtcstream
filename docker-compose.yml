@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  signaling:
+    build: ./
+    ports:
+      - 4000:4000
+  
+  hls:
+    build: ./hls
+    ports:
+      - 5000:5000
+    volumes:
+      - ./hls/output:/usr/src/app/output
+
+  client: 
+    build: ./client
+    ports:
+      - 3000:3000

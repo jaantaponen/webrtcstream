@@ -7,6 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "hls": "ts-node-dev hls.ts",
+    "tsc": "tsc hls.ts",
     "start": "ts-node hls.ts"
   },
   "keywords": [],

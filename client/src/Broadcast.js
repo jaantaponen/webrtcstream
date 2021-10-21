@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import socketIOClient from "socket.io-client";
 import Video from './Video'
 
-const ENDPOINT = "http://127.0.0.1:4000";
+const ENDPOINT = "http://localhost:4000";
 
 const config = {
   iceServers: [{ "urls": "stun:stun.l.google.com:19302" }]
@@ -67,6 +67,7 @@ const Broadcast = () => {
   const getStreamRuutu = async event => {
     event.preventDefault();
     const b = await navigator.mediaDevices.getDisplayMedia()
+    setSrcVid(b)
     console.log(b)
   }
 
@@ -91,7 +92,7 @@ const Broadcast = () => {
       <button onClick={getStreamRuutu}>naurujaaruutu</button>
       <button onClick={getStreamKamera}>naurujaakamera</button>
       <p>maoltime</p>
-      {srcVid && <Video srcObject={srcVid} muted={true} autoPlay={true} />}
+      {srcVid && <Video style={{width: "1200px"}} srcObject={srcVid} muted={true} autoPlay={true} />}
     </div>
   );
 }

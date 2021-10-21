@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import socketIOClient from "socket.io-client";
 import Video from './Video'
 
-const ENDPOINT = "http://127.0.0.1:4000";
+const ENDPOINT = "http://localhost:4000";
 
 const config = {
     iceServers: [{"urls": "stun:stun.l.google.com:19302"}]
