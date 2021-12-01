@@ -29,8 +29,11 @@ const Broadcast = () => {
       const peerConnection = new RTCPeerConnection(config);
       peerConnections[id] = peerConnection;
 
+      // if you want to test the screen sharing comment this line and uncomment the next two!
+      // Also remember to comment out the two lines at row 90, 91
       let stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
       //let stream = await navigator.mediaDevices.getDisplayMedia()
+      //setSrcVid(stream)
       stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
 
       peerConnection.onicecandidate = event => {
@@ -83,6 +86,7 @@ const Broadcast = () => {
       audio: { deviceId: audioSelect ? { exact: audioSelect } : undefined },
       video: { deviceId: videoSelect ? { exact: videoSelect } : undefined }
     };
+    // The next two lines need to commented out in combination with the above to get screensharing working.
     const stream = await navigator.mediaDevices.getUserMedia(constraints)
     //const stream = await navigator.mediaDevices.getDisplayMedia()
     setSrcVid(stream)
@@ -91,9 +95,8 @@ const Broadcast = () => {
 
   return (
     <div>
-      {/* <button onClick={getStreamRuutu}>naurujaaruutu</button> */}
-      <button onClick={getStreamKamera}>share stream</button>
-      <p>maoltime</p>
+      <button onClick={getStreamKamera}>share screen</button>
+      <p>test broadcast</p>
       {srcVid && <Video style={{width: "1200px"}} srcObject={srcVid} muted={true} autoPlay={true} />}
     </div>
   );

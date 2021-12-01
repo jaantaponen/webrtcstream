@@ -7,7 +7,7 @@ import { waitUntil } from 'async-wait-until';
 const fs = require("fs"); // Load the filesystem module
 const fsExtra = require('fs-extra')
 const path = require('path'); 
-const ENDPOINT = "http://localhost:4000";
+const ENDPOINT = "http://signaling:4000";
 const socket = io(ENDPOINT);
 
 const express = require("express");
@@ -20,7 +20,15 @@ app.use(express.static(__dirname + "/output"));
 let receiver
 const output = path.resolve(".")
 const filename = "test.webm"
-fsExtra.emptyDirSync(output+'/output')
+
+try {
+  fsExtra.emptyDirSync(output+'/output')
+  fs.unlinkSync('./test.webm')
+} catch(e) {
+  // console.log("Error occured in temp")
+  // console.log(e.message)
+}
+
 console.log("started")
 
 const spawnffmpeg = async () => {
@@ -32,9 +40,9 @@ const spawnffmpeg = async () => {
       console.log(fileSizeInMegabytes)
       return fileSizeInMegabytes > 0.1
     }
-  },{ timeout: 20000 },);
+  },{ timeout: 30000 },);
 
-  const args = ["-re", "-i", `${output}/${filename}`, "-c:v", "libx264", "-c:a", "aac", "-ac", "1", "-strict", "-2", "-crf", "18", "-profile:v", "baseline", "-maxrate", "1000k", "-bufsize", "1835k", "-pix_fmt", "yuv420p", "-flags", "-global_header", "-hls_time", "10", "-hls_list_size", "6", "-hls_wrap", "10", "-start_number", "1", `${output}/output/test.mpd`]
+  const args = ["-re", "-i", `${output}/${filename}`, "-c:v", "libx264", "-c:a", "aac", "-ac", "1", "-strict", "-2", "-crf", "18", "-profile:v", "baseline", "-maxrate", "1000k", "-bufsize", "1835k", "-pix_fmt", "yuv420p", "-flags", "-global_header", "-hls_time", "10", "-hls_list_size", "6", "-hls_wrap", "10", "-start_number", "1", `${output}/output/test.m3u8`]
   const ffmpeg = spawn('ffmpeg', args);
   console.log('Spawning ffmpeg ' + args.join(' '));
   ffmpeg.on('exit', () => console.log("FFMPEG EXITED"));
@@ -46,7 +54,7 @@ const spawnffmpeg = async () => {
 }
 
 socket.on("offer", async (id, description) => {
-  const recorder = new MediaRecorder([], `./output/${filename}`, {
+  const recorder = new MediaRecorder([], `./${filename}`, {
     width: 640,
     height: 360,
   });

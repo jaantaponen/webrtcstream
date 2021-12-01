@@ -9,8 +9,13 @@ services:
     build: ./hls
     ports:
       - 5000:5000
-    volumes:
-      - ./hls/output:/usr/src/app/output
+    # volumes:
+    #   - ./hls/output:/usr/src/app/output
+    environment:
+      - ENDPOINT='http://signaling:4000'
+    depends_on:
+      - "signaling"
+    command: ["./wait-for-it.sh", "signaling:4000", "--", "npm", "run", "hls"]
 
   client: 
     build: ./client
