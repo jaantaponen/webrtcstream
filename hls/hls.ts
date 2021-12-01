@@ -18,9 +18,9 @@ const server = http.createServer(app);
 app.use(express.static(__dirname + "/output"));
 
 let receiver
-const output = path.resolve("output")
+const output = path.resolve(".")
 const filename = "test.webm"
-fsExtra.emptyDirSync(output)
+fsExtra.emptyDirSync(output+'/output')
 console.log("started")
 
 const spawnffmpeg = async () => {
@@ -32,9 +32,9 @@ const spawnffmpeg = async () => {
       console.log(fileSizeInMegabytes)
       return fileSizeInMegabytes > 0.1
     }
-  });
+  },{ timeout: 20000 },);
 
-  const args = ["-re", "-i", `${output}/${filename}`, "-c:v", "libx264", "-c:a", "aac", "-ac", "1", "-strict", "-2", "-crf", "18", "-profile:v", "baseline", "-maxrate", "1000k", "-bufsize", "1835k", "-pix_fmt", "yuv420p", "-flags", "-global_header", "-hls_time", "10", "-hls_list_size", "6", "-hls_wrap", "10", "-start_number", "1", `${output}/${filename}`]
+  const args = ["-re", "-i", `${output}/${filename}`, "-c:v", "libx264", "-c:a", "aac", "-ac", "1", "-strict", "-2", "-crf", "18", "-profile:v", "baseline", "-maxrate", "1000k", "-bufsize", "1835k", "-pix_fmt", "yuv420p", "-flags", "-global_header", "-hls_time", "10", "-hls_list_size", "6", "-hls_wrap", "10", "-start_number", "1", `${output}/output/test.mpd`]
   const ffmpeg = spawn('ffmpeg', args);
   console.log('Spawning ffmpeg ' + args.join(' '));
   ffmpeg.on('exit', () => console.log("FFMPEG EXITED"));
