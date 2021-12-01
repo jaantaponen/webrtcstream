@@ -53,7 +53,7 @@ const ClientComponent = () => {
 
     return (
         <div>
-            <p>naurutime</p>
+            <p>testclient</p>
             {srcVid && <Video srcObject={srcVid} muted={true} autoPlay={true} />}
         </div>
     );
