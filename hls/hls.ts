@@ -7,7 +7,7 @@ import { waitUntil } from 'async-wait-until';
 const fs = require("fs"); // Load the filesystem module
 const fsExtra = require('fs-extra')
 const path = require('path'); 
-const ENDPOINT = "http://signaling:4000";
+const ENDPOINT = process.env.ENDPOINT || "http://localhost:4000";
 const socket = io(ENDPOINT);
 
 const express = require("express");
