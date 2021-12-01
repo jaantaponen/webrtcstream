@@ -30,6 +30,7 @@ const Broadcast = () => {
       peerConnections[id] = peerConnection;
 
       let stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+      //let stream = await navigator.mediaDevices.getDisplayMedia()
       stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
 
       peerConnection.onicecandidate = event => {
@@ -64,12 +65,12 @@ const Broadcast = () => {
     });
   }, []);
 
-  const getStreamRuutu = async event => {
-    event.preventDefault();
-    const b = await navigator.mediaDevices.getDisplayMedia()
-    setSrcVid(b)
-    console.log(b)
-  }
+  // const getStreamRuutu = async event => {
+  //   event.preventDefault();
+  //   const b = await navigator.mediaDevices.getDisplayMedia()
+  //   setSrcVid(b)
+  //   console.log(b)
+  // }
 
   const getStreamKamera = async event => {
     event.preventDefault();
@@ -83,14 +84,15 @@ const Broadcast = () => {
       video: { deviceId: videoSelect ? { exact: videoSelect } : undefined }
     };
     const stream = await navigator.mediaDevices.getUserMedia(constraints)
+    //const stream = await navigator.mediaDevices.getDisplayMedia()
     setSrcVid(stream)
     socket.emit("broadcaster");
   }
 
   return (
     <div>
-      <button onClick={getStreamRuutu}>naurujaaruutu</button>
-      <button onClick={getStreamKamera}>naurujaakamera</button>
+      {/* <button onClick={getStreamRuutu}>naurujaaruutu</button> */}
+      <button onClick={getStreamKamera}>share stream</button>
       <p>maoltime</p>
       {srcVid && <Video style={{width: "1200px"}} srcObject={srcVid} muted={true} autoPlay={true} />}
     </div>
